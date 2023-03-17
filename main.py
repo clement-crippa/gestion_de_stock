@@ -1,13 +1,17 @@
 import mysql.connector
 from tkinter import *
 from tkinter import ttk
+import matplotlib.pyplot as graphique
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import csv
 
 admin = mysql.connector.connect(host="localhost", user="root", password="rootmdp", database="boutique")
 cursor = admin.cursor()
 # Fenêtre principale
 Stockage = Tk()
 Stockage.title("Stock boutique")
-Stockage.geometry("800x800")
+Stockage.geometry("800x900")
+Stockage.resizable(False, False)
 # Variable
 Nom = StringVar()
 Description = StringVar()
@@ -85,6 +89,16 @@ boutonAjouter.grid(column=1, row=4)
 # Bouton Modifier
 boutonModifier = Button(tableau, text="Modifier", command=lambda: Modifier())
 boutonModifier.grid(column=2, row=4)
+# Bouton Exporter
+boutonModifier = Button(tableau, text="Exporter", command=lambda: Exporter())
+boutonModifier.grid(column=2, row=5)
+# Graphique avec affichage 100 par 100
+graphique = graphique.figure(figsize=(6, 4), dpi=100)
+# Nombre de lignes et colonnes par produits
+barre_graph = graphique.add_subplot(111)
+# Affiche le graphique sur la fenêtre
+graphiquestock = FigureCanvasTkAgg(graphique, master=Stockage)
+graphiquestock.get_tk_widget().place(x=100, y=450)
 
 
 # Permet d'actualiser la table en cas de modification
@@ -111,6 +125,7 @@ def Supprimer():
     cursor.execute(commande)
     admin.commit()
     tableau_stock.delete(id)
+    ActualiseGraph()
 
 
 # Permet d'ajouter un produit a la base de donnée
@@ -119,6 +134,7 @@ def Ajouter():
     commande = "insert into produit (nom,description,prix,quantite,id_categorie) values (%s,%s,%s,%s,%s)"
     cursor.execute(commande, valeur)
     admin.commit()
+    ActualiseGraph()
     AfficherTable()
 
 
@@ -129,9 +145,41 @@ def Modifier():
     commande = "update produit set nom=%s,description=%s,prix=%s,quantite=%s,id_categorie=%s where id=" + id
     cursor.execute(commande, valeur)
     admin.commit()
+    ActualiseGraph()
     ActualiseTable()
     AfficherTable()
 
 
+def Exporter():
+    cursor.execute("select p.*, c.nom from produit p inner join categorie c on p.id_categorie = c.id;")
+    produit = cursor.fetchall()
+    with open('stock_boutique.csv', 'w', newline='') as csvfile:
+        export = csv.writer(csvfile)
+        # Titre des lignes
+        export.writerow(["ID", "Nom", "Description", "Prix", "Quantité", "ID Catégorie", "Catégorie"])
+        # Écris dans chaque colonne les données correspondantes à la base de donnée
+        for produits in produit:
+            export.writerow([produits[0], produits[1], produits[2], produits[3], produits[4], produits[5], produits[6]])
+
+# Actualise le graphique
+def ActualiseGraph():
+    barre_graph.clear()
+    barre_graph.set_xlabel("Produits")
+    barre_graph.set_ylabel("Quantités")
+    cursor.execute("select * from produit")
+    graph = cursor.fetchall()
+    # Affiche le nom du produit
+    produits = [x[1] for x in graph]
+    # Affiche la quantité de l'article
+    quantites = [x[4] for x in graph]
+
+    # Ajoute au graphique les données
+    barre_graph.bar(produits, quantites)
+
+    # Actualise le graphique avec les données à jour
+    graphique.canvas.draw()
+
+
+ActualiseGraph()
 AfficherTable()
 Stockage.mainloop()

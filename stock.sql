@@ -54,7 +54,7 @@ CREATE TABLE `produit` (
   `quantite` int DEFAULT NULL,
   `id_categorie` int DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -63,7 +63,7 @@ CREATE TABLE `produit` (
 
 LOCK TABLES `produit` WRITE;
 /*!40000 ALTER TABLE `produit` DISABLE KEYS */;
-INSERT INTO `produit` VALUES (1,'Pomme','Rouge',5,50,1),(2,'Poire','Williams',4,70,1),(3,'Salade','Iceberg',2,100,2),(6,'Framboise','Sauvage',100,5,1),(7,'Patate','Brune',5,800,2);
+INSERT INTO `produit` VALUES (1,'Pomme','Rouge',5,100,1),(2,'Poire','Williams',4,250,1),(3,'Salade','Iceberg',2,800,2),(6,'Framboise','Sauvage',100,1000,1),(7,'Patate','Brune',7,300,2),(8,'Tomate','Cerise',20,500,2),(9,'Ananas','Jaune',4,80,1);
 /*!40000 ALTER TABLE `produit` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -76,4 +76,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-03-15 15:13:52
+-- Dump completed on 2023-03-17  9:25:44
